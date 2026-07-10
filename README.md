@@ -1,41 +1,76 @@
-# OpenRouter Credits Widget (Android)
+# OpenRouter Credits Widget
 
-App Widget que mostra os créditos restantes da OpenRouter em tempo real.
+A simple Android home-screen widget that shows your [OpenRouter](https://openrouter.ai) credit balance in real time, plus recent usage.
 
-## Como funciona
-- Na primeira vez que você adiciona o widget, ele pede a API key (`sk-or-...`).
-- Faz `GET https://openrouter.ai/api/v1/credits` e exibe `remaining_credits`.
-- Atualiza a cada 15 min via WorkManager + botão de refresh manual no widget.
-- Toque no corpo do widget para reconfigurar a chave.
+![widget tiers](https://img.shields.io/badge/widget-compact%20%7C%20medium%20%7C%20full-blue)
+
+## Features
+
+- **Live credit balance** — fetches `GET /api/v1/credits` and displays remaining credits (`total_credits − total_usage`).
+- **Today's spend** — sums `usage` for the current day from `GET /api/v1/activity`.
+- **7-day usage bars** — one bar per day (the granularity OpenRouter actually returns), drawn natively in the widget.
+- **15-minute real-time sparkline** — because `/activity` is daily-only, the widget also derives a sub-day spend curve from the delta between consecutive polls (stored locally).
+- **Top models (24–48h)** — the 3 most expensive models in the last two days.
+- **Responsive layout** — the amount of detail adapts to the widget size:
+  - **Compact (≈2×2):** balance + last update time only.
+  - **Medium (≈3×3):** + 15-min sparkline + "24h" total.
+  - **Full (≈4×4+):** + 7-day bars + top models + "today / 24h / time" line.
+- **Manual refresh** — tap the sync button for an on-demand update (system minimum update interval is 15 min for the periodic one).
+- **Per-widget API key** — each widget stores its own OpenRouter key in `EncryptedSharedPreferences` (Android Keystore, AES-256-GCM). The key never leaves the device except in the HTTPS request to OpenRouter.
+
+## Security notes
+
+- The API key is stored encrypted at rest (`androidx.security:security-crypto`) and is masked while typing.
+- `android:allowBackup="false"` so the key is **not** included in Android/Google backups.
+- All traffic goes over HTTPS to `openrouter.ai` only. There is no analytics, telemetry, or third-party SDK.
+- The key has the same power as your account's API key: a leak lets someone spend your credits (it does **not** expose your account password or billing card). If OpenRouter offers a read-scoped key, prefer it for the widget.
+
+## Data the app reads
+
+| Endpoint | Used for |
+|----------|----------|
+| `GET /api/v1/credits` | `total_credits`, `total_usage` → remaining balance |
+| `GET /api/v1/activity` | daily `usage` per model → today's spend, 7-day bars, top models |
 
 ## Build
-Abra a pasta `OpenRouterCreditsWidget` no Android Studio (Arquivo > Open).
-Conecte um telefone (USB/ADB) ou use um emulador e rode `app`.
 
-Para gerar o APK de release:
-```
-./gradlew assembleRelease
-```
-(O wrapper é gerado automaticamente ao abrir no Android Studio; se preferir linha de comando, rode `gradle wrapper` antes.)
+Requirements: Android SDK (compileSdk 34), JDK 17, Gradle 8.9.
 
-## Notas
-- `updatePeriodMillis` no XML é 30 min (mínimo do Android); o refresh real é via WorkManager a cada 15 min + botão manual.
-- A chave fica salva em `SharedPreferences` do app (por widget id). Não vai pra lugar nenhum além da OpenRouter.
-- minSdk 24 (Android 7.0+), targetSdk 34.
+```bash
+git clone https://github.com/jprngd-netizen/OpenRouterCreditsWidget.git
+cd OpenRouterCreditsWidget
+./gradlew assembleDebug
+```
 
-## Estrutura
+The unsigned debug APK lands at `app/build/outputs/apk/debug/app-debug.apk`. For a release build, create a signing key and configure `signingConfigs` in `app/build.gradle.kts`.
+
+## Install
+
+Sideload the debug APK or build a release and install it. Then:
+
+1. Long-press the home screen → *Widgets* → drag **OR Credits** onto the home screen.
+2. Paste your OpenRouter API key (`sk-or-...`) in the config screen.
+3. Resize the widget to change how much detail is shown.
+
+## Architecture
+
 ```
-app/src/main/
-  AndroidManifest.xml
-  java/com/gabrielsalem/openroutercredits/
-    CreditsWidgetProvider.kt   # receiver + atualização
-    ConfigActivity.kt          # tela de configuração da key
-    OpenRouterApi.kt           # modelo + interface Retrofit
-    ApiClient.kt               # instância Retrofit
-    Prefs.kt                   # SharedPreferences
-    WidgetUpdateScheduler.kt   # WorkManager periódico
-  res/layout/widget_credits.xml
-  res/layout/activity_config.xml
-  res/xml/credits_widget_info.xml
-  res/drawable/widget_bg.xml
+app/src/main/java/com/gabrielsalem/openroutercredits/
+├── OpenRouterApi.kt        # Retrofit interface + data models
+├── ApiClient.kt            # singleton Retrofit instance
+├── Prefs.kt                # EncryptedSharedPreferences per widget id
+├── CreditsWidgetProvider.kt# AppWidgetProvider: fetch, layout tiers, refresh
+├── ConfigActivity.kt       # key entry screen
+├── WidgetUpdateScheduler.kt# WorkManager 15-min periodic update
+├── UsageStore.kt           # local 24h spend series (for the sparkline)
+├── ActivityStore.kt        # derive today/7d/top-models from /activity
+└── WidgetCharts.kt         # sparkline + bar chart bitmaps
 ```
+
+## ⚠️ Personal project — no maintenance guarantee
+
+This is a **personal project** built for my own use. It is provided as-is, without any guarantee of continued development, timely updates, or support. The OpenRouter API may change at any time and break the widget; I may or may not fix it. Use at your own risk.
+
+## License
+
+MIT — see [LICENSE](LICENSE).
