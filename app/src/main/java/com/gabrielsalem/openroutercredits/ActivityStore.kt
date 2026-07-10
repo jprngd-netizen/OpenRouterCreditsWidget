@@ -42,4 +42,21 @@ object ActivityStore {
             .sortedByDescending { it.second }
             .take(limit)
     }
+
+    /**
+     * Último modelo usado: pega o dia mais recente com atividade e, entre os
+     * modelos desse dia, o de maior usage (proxy de "último modelo" — /activity
+     * é DIÁRIO, não horário, então não dá pra saber a última chamada exata).
+     * Retorna (modelo, gasto do dia, data) ou null se não houver atividade.
+     */
+    fun lastModel(items: List<ActivityItem>): Triple<String, Double, String>? {
+        if (items.isEmpty()) return null
+        val latestDate = items.maxOf { it.date }
+        val dayItems = items.filter { it.date == latestDate }
+        val (model, spent) = dayItems.groupBy { it.model }
+            .mapValues { (_, v) -> v.sumOf { it.usage } }
+            .toList()
+            .maxByOrNull { it.second } ?: return null
+        return Triple(model, spent, latestDate)
+    }
 }

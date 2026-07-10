@@ -171,6 +171,22 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                         rv.setViewVisibility(R.id.top_models, View.GONE)
                     }
 
+                    // último modelo usado (proxy: modelo de maior usage no dia mais recente)
+                    if (tier != Tier.COMPACT) {
+                        val last = ActivityStore.lastModel(activity)
+                        if (last != null) {
+                            val name = last.first.split('/').last()
+                            val spent = "$${"%.3f".format(last.second)}"
+                            rv.setTextViewText(R.id.last_model, "último: $name · $spent")
+                            rv.setTextColor(R.id.last_model, Color.parseColor(theme.accentDim))
+                            rv.setViewVisibility(R.id.last_model, View.VISIBLE)
+                        } else {
+                            rv.setViewVisibility(R.id.last_model, View.GONE)
+                        }
+                    } else {
+                        rv.setViewVisibility(R.id.last_model, View.GONE)
+                    }
+
                     // linha de status adaptada ao tier
                     val status = when (tier) {
                         Tier.FULL -> "hoje $${"%.4f".format(spentToday ?: 0.0)} · 24h $${"%.4f".format(total24)} · $now"
