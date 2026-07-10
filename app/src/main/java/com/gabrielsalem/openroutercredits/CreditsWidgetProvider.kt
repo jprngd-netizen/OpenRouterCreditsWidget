@@ -4,6 +4,7 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.graphics.Color
 import android.os.Build
 import android.view.View
 import android.widget.RemoteViews
@@ -80,14 +81,30 @@ class CreditsWidgetProvider : AppWidgetProvider() {
         ) {
             val opts = appWidgetManager.getAppWidgetOptions(appWidgetId)
             val tier = layoutTier(opts)
+            val theme = WidgetTheme.fromId(Prefs.getTheme(context, appWidgetId))
+            val bgAlpha = Prefs.getBgAlpha(context, appWidgetId)
 
             val loading = RemoteViews(context.packageName, R.layout.widget_credits)
+            loading.setImageViewBitmap(R.id.bg, drawableToBitmap(backgroundDrawable(theme, bgAlpha)))
+            loading.setTextColor(R.id.credits, Color.parseColor(theme.text))
+            loading.setTextColor(R.id.title, Color.parseColor(theme.title))
+            loading.setTextColor(R.id.updated, Color.parseColor(theme.subText))
             loading.setTextViewText(R.id.credits, "…")
             appWidgetManager.updateAppWidget(appWidgetId, loading)
 
             val key = Prefs.getKey(context, appWidgetId)
+            val accent = Color.parseColor(theme.accent)
+            val accentDim = Color.parseColor(theme.accentDim)
+            val textCol = Color.parseColor(theme.text)
+            val subTextCol = Color.parseColor(theme.subText)
+            val titleCol = Color.parseColor(theme.title)
+
             if (key.isNullOrBlank()) {
                 val rv = RemoteViews(context.packageName, R.layout.widget_credits)
+                rv.setImageViewBitmap(R.id.bg, drawableToBitmap(backgroundDrawable(theme, bgAlpha)))
+                rv.setTextColor(R.id.credits, textCol)
+                rv.setTextColor(R.id.title, titleCol)
+                rv.setTextColor(R.id.updated, subTextCol)
                 rv.setTextViewText(R.id.credits, "set key")
                 rv.setTextViewText(R.id.updated, "toque p/ configurar")
                 rv.setViewVisibility(R.id.sparkline, View.GONE)
@@ -111,6 +128,11 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                     val now = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
 
                     val rv = RemoteViews(context.packageName, R.layout.widget_credits)
+                    rv.setImageViewBitmap(R.id.bg, drawableToBitmap(backgroundDrawable(theme, bgAlpha)))
+                    rv.setTextColor(R.id.credits, textCol)
+                    rv.setTextColor(R.id.title, titleCol)
+                    rv.setTextColor(R.id.updated, subTextCol)
+                    rv.setTextColor(R.id.spent_today, Color.parseColor(theme.accent))
                     rv.setTextViewText(R.id.credits, text)
 
                     // sparkline de tempo real (derivação local entre polls)
@@ -118,7 +140,7 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                     val series = UsageStore.series(context)
                     val total24 = UsageStore.total24h(context)
                     if (tier != Tier.COMPACT && series.size >= 2) {
-                        rv.setImageViewBitmap(R.id.sparkline, WidgetCharts.sparkline(series, 600, 96))
+                        rv.setImageViewBitmap(R.id.sparkline, WidgetCharts.sparkline(series, 600, 96, accent))
                         rv.setViewVisibility(R.id.sparkline, View.VISIBLE)
                     } else {
                         rv.setViewVisibility(R.id.sparkline, View.GONE)
@@ -128,7 +150,7 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                     val spentToday = if (activity.isNotEmpty()) ActivityStore.spentToday(activity) else null
                     val last7 = ActivityStore.last7Days(activity)
                     if (tier == Tier.FULL && last7.any { it.second > 0.0 }) {
-                        rv.setImageViewBitmap(R.id.bars7d, WidgetCharts.bars(last7, 600, 160))
+                        rv.setImageViewBitmap(R.id.bars7d, WidgetCharts.bars(last7, 600, 160, accent, accentDim))
                         rv.setViewVisibility(R.id.bars7d, View.VISIBLE)
                     } else {
                         rv.setViewVisibility(R.id.bars7d, View.GONE)
@@ -140,6 +162,7 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                         if (top.isNotEmpty()) {
                             val s = top.joinToString("  ") { "${it.first.split('/').last()}:$${"%.3f".format(it.second)}" }
                             rv.setTextViewText(R.id.top_models, s)
+                            rv.setTextColor(R.id.top_models, subTextCol)
                             rv.setViewVisibility(R.id.top_models, View.VISIBLE)
                         } else {
                             rv.setViewVisibility(R.id.top_models, View.GONE)
@@ -168,6 +191,10 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                     appWidgetManager.updateAppWidget(appWidgetId, rv)
                 } catch (e: Exception) {
                     val rv = RemoteViews(context.packageName, R.layout.widget_credits)
+                    rv.setImageViewBitmap(R.id.bg, drawableToBitmap(backgroundDrawable(theme, bgAlpha)))
+                    rv.setTextColor(R.id.credits, textCol)
+                    rv.setTextColor(R.id.title, titleCol)
+                    rv.setTextColor(R.id.updated, subTextCol)
                     rv.setTextViewText(R.id.credits, "erro")
                     rv.setTextViewText(R.id.updated, (e.message ?: "falha").take(24))
                     rv.setViewVisibility(R.id.sparkline, View.GONE)
@@ -178,6 +205,17 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                     appWidgetManager.updateAppWidget(appWidgetId, rv)
                 }
             }
+        }
+
+        /** Renderiza um Drawable (fundo com alpha) em Bitmap para o RemoteViews. */
+        private fun drawableToBitmap(drawable: android.graphics.drawable.Drawable): android.graphics.Bitmap {
+            val w = 600
+            val h = 400
+            val bmp = android.graphics.Bitmap.createBitmap(w, h, android.graphics.Bitmap.Config.ARGB_8888)
+            val canvas = android.graphics.Canvas(bmp)
+            drawable.setBounds(0, 0, w, h)
+            drawable.draw(canvas)
+            return bmp
         }
 
         private fun refreshIntent(context: Context, id: Int): android.app.PendingIntent {

@@ -13,7 +13,7 @@ import android.graphics.RectF
  */
 object WidgetCharts {
 
-    fun sparkline(points: List<Pair<Long, Double>>, w: Int, h: Int): Bitmap {
+    fun sparkline(points: List<Pair<Long, Double>>, w: Int, h: Int, accent: Int): Bitmap {
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
         if (points.size < 2) return bmp
@@ -42,8 +42,8 @@ object WidgetCharts {
             style = Paint.Style.FILL
             shader = android.graphics.LinearGradient(
                 0f, padTop, 0f, h.toFloat(),
-                Color.parseColor("#334CC2FF"),
-                Color.parseColor("#004CC2FF"),
+                Color.argb(0x33, Color.red(accent), Color.green(accent), Color.blue(accent)),
+                Color.argb(0x00, Color.red(accent), Color.green(accent), Color.blue(accent)),
                 android.graphics.Shader.TileMode.CLAMP
             )
         }
@@ -51,7 +51,7 @@ object WidgetCharts {
 
         val paintLine = Paint().apply {
             style = Paint.Style.STROKE
-            color = Color.parseColor("#4CC2FF")
+            color = accent
             strokeWidth = (h * 0.06f).coerceAtLeast(2f)
             isAntiAlias = true
         }
@@ -60,14 +60,14 @@ object WidgetCharts {
         val last = pts.last()
         val paintDot = Paint().apply {
             style = Paint.Style.FILL
-            color = Color.parseColor("#FFFFFF")
+            color = Color.WHITE
             isAntiAlias = true
         }
         canvas.drawCircle(last.first, last.second, (h * 0.08f).coerceAtLeast(2f), paintDot)
         return bmp
     }
 
-    fun bars(days: List<Pair<String, Double>>, w: Int, h: Int): Bitmap {
+    fun bars(days: List<Pair<String, Double>>, w: Int, h: Int, accent: Int, accentDim: Int): Bitmap {
         val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
         if (days.isEmpty()) return bmp
@@ -90,7 +90,7 @@ object WidgetCharts {
             val x = gap + i * (barW + gap)
             val bh = (v / max * usableH).toFloat().coerceAtLeast(2f)
             val y = h - padBottom - bh
-            paint.color = if (i == n - 1) Color.parseColor("#4CC2FF") else Color.parseColor("#2E7DA8")
+            paint.color = if (i == n - 1) accent else accentDim
             canvas.drawRoundRect(RectF(x, y, x + barW, h - padBottom), 4f, 4f, paint)
             // rótulo: 2 últimos dígitos do dia
             val day = label.takeLast(2)

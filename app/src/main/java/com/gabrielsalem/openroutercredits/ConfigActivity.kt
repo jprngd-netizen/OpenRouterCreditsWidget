@@ -4,8 +4,13 @@ import android.appwidget.AppWidgetManager
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.view.View
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.SeekBar
+import android.widget.Spinner
+import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 
 class ConfigActivity : AppCompatActivity() {
@@ -30,10 +35,37 @@ class ConfigActivity : AppCompatActivity() {
         setContentView(R.layout.activity_config)
 
         val edit = findViewById<EditText>(R.id.keyInput)
+        val themeSpinner = findViewById<Spinner>(R.id.themeSpinner)
+        val alphaSeek = findViewById<SeekBar>(R.id.alphaSeek)
+        val alphaLabel = findViewById<TextView>(R.id.alphaLabel)
         val btn = findViewById<Button>(R.id.saveBtn)
 
-        val existing = Prefs.getKey(this, appWidgetId)
-        if (!existing.isNullOrBlank()) edit.setText(existing)
+        // temas
+        val themes = WidgetTheme.ALL
+        val adapter = ArrayAdapter(
+            this, android.R.layout.simple_spinner_dropdown_item,
+            themes.map { it.label }
+        )
+        themeSpinner.adapter = adapter
+
+        val existingKey = Prefs.getKey(this, appWidgetId)
+        if (!existingKey.isNullOrBlank()) edit.setText(existingKey)
+
+        val existingTheme = Prefs.getTheme(this, appWidgetId)
+        val themeIndex = themes.indexOfFirst { it.id == existingTheme }.coerceAtLeast(0)
+        themeSpinner.setSelection(themeIndex)
+
+        val existingAlpha = Prefs.getBgAlpha(this, appWidgetId)
+        alphaSeek.progress = existingAlpha
+        alphaLabel.text = "Transparência do fundo: $existingAlpha%"
+
+        alphaSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
+            override fun onProgressChanged(s: SeekBar?, p: Int, fromUser: Boolean) {
+                alphaLabel.text = "Transparência do fundo: $p%"
+            }
+            override fun onStartTrackingTouch(s: SeekBar?) {}
+            override fun onStopTrackingTouch(s: SeekBar?) {}
+        })
 
         btn.setOnClickListener {
             val key = edit.text.toString().trim()
@@ -42,6 +74,8 @@ class ConfigActivity : AppCompatActivity() {
                 return@setOnClickListener
             }
             Prefs.setKey(this, appWidgetId, key)
+            Prefs.setTheme(this, appWidgetId, themes[themeSpinner.selectedItemPosition].id)
+            Prefs.setBgAlpha(this, appWidgetId, alphaSeek.progress)
 
             val result = Intent().putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId)
             setResult(RESULT_OK, result)

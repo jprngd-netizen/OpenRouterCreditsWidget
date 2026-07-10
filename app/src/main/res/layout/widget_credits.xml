@@ -1,95 +1,103 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/root"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="14dp"
-    android:background="@drawable/widget_bg"
-    android:gravity="center_vertical">
+    android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/bg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/widget_bg" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:padding="14dp"
         android:gravity="center_vertical">
 
-        <TextView
-            android:id="@+id/title"
-            android:layout_width="0dp"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="OpenRouter"
-            android:textColor="#FFFFFF"
-            android:textSize="12sp"
-            android:textStyle="bold" />
+            android:orientation="horizontal"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="OpenRouter"
+                android:textColor="#FFFFFF"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/spent_today"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="hoje $0.00"
+                android:textColor="#FFB454"
+                android:textSize="11sp" />
+        </LinearLayout>
 
         <TextView
-            android:id="@+id/spent_today"
+            android:id="@+id/credits"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="hoje $0.00"
-            android:textColor="#FFB454"
-            android:textSize="11sp" />
-    </LinearLayout>
+            android:text="$0.0000"
+            android:textColor="#4CC2FF"
+            android:textSize="26sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/credits"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="$0.0000"
-        android:textColor="#4CC2FF"
-        android:textSize="26sp"
-        android:textStyle="bold" />
+        <ImageView
+            android:id="@+id/sparkline"
+            android:layout_width="match_parent"
+            android:layout_height="24dp"
+            android:scaleType="fitXY"
+            android:layout_marginTop="4dp" />
 
-    <!-- Sparkline do uso em tempo real (delta entre polls de 15min) -->
-    <ImageView
-        android:id="@+id/sparkline"
-        android:layout_width="match_parent"
-        android:layout_height="24dp"
-        android:scaleType="fitXY"
-        android:layout_marginTop="4dp" />
-
-    <!-- Barras dos últimos 7 dias (granularidade que /activity entrega) -->
-    <ImageView
-        android:id="@+id/bars7d"
-        android:layout_width="match_parent"
-        android:layout_height="40dp"
-        android:scaleType="fitXY"
-        android:layout_marginTop="4dp" />
-
-    <!-- Top modelos das últimas 24-48h (só em widgets grandes) -->
-    <TextView
-        android:id="@+id/top_models"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:textColor="#CCCCCC"
-        android:textSize="10sp"
-        android:layout_marginTop="2dp" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:gravity="center_vertical"
-        android:layout_marginTop="2dp">
+        <ImageView
+            android:id="@+id/bars7d"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:scaleType="fitXY"
+            android:layout_marginTop="4dp" />
 
         <TextView
-            android:id="@+id/updated"
-            android:layout_width="0dp"
+            android:id="@+id/top_models"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="--:--:--"
-            android:textColor="#AAAAAA"
-            android:textSize="10sp" />
+            android:textColor="#CCCCCC"
+            android:textSize="10sp"
+            android:layout_marginTop="2dp" />
 
-        <ImageButton
-            android:id="@+id/refresh"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
-            android:src="@android:drawable/ic_popup_sync"
-            android:background="@android:color/transparent"
-            android:contentDescription="Atualizar agora" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="2dp">
 
+            <TextView
+                android:id="@+id/updated"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="--:--:--"
+                android:textColor="#AAAAAA"
+                android:textSize="10sp" />
+
+            <ImageButton
+                android:id="@+id/refresh"
+                android:layout_width="24dp"
+                android:layout_height="24dp"
+                android:src="@android:drawable/ic_popup_sync"
+                android:background="@android:color/transparent"
+                android:contentDescription="Atualizar agora" />
+
+        </LinearLayout>
     </LinearLayout>
-</LinearLayout>
+</FrameLayout>
