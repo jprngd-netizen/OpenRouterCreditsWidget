@@ -11,10 +11,12 @@ A simple Android home-screen widget that shows your [OpenRouter](https://openrou
 - **7-day usage bars** — one bar per day (the granularity OpenRouter actually returns), drawn natively in the widget.
 - **15-minute real-time sparkline** — because `/activity` is daily-only, the widget also derives a sub-day spend curve from the delta between consecutive polls (stored locally).
 - **Top models (24–48h)** — the 3 most expensive models in the last two days.
+- **Last model used** — shows the model with the highest spend on the most recent day with activity, plus that day's spend (e.g. `last: gpt-4.1 · $0.015`). Note: `/activity` is daily-only, so this is a proxy for "last model", not the exact last call.
+- **Themes + transparency** — pick from 7 predefined color schemes (Dark, Light, AMOLED, Ocean, Sunset, Mint, Grape) and a 0–100% background transparency slider, all configured per-widget in the config screen.
 - **Responsive layout** — the amount of detail adapts to the widget size:
   - **Compact (≈2×2):** balance + last update time only.
-  - **Medium (≈3×3):** + 15-min sparkline + "24h" total.
-  - **Full (≈4×4+):** + 7-day bars + top models + "today / 24h / time" line.
+  - **Medium (≈3×3):** + 15-min sparkline + "24h" total + last model.
+  - **Full (≈4×4+):** + 7-day bars + top models + last model + "today / 24h / time" line.
 - **Manual refresh** — tap the sync button for an on-demand update (system minimum update interval is 15 min for the periodic one).
 - **Per-widget API key** — each widget stores its own OpenRouter key in `EncryptedSharedPreferences` (Android Keystore, AES-256-GCM). The key never leaves the device except in the HTTPS request to OpenRouter.
 
@@ -63,8 +65,9 @@ app/src/main/java/com/gabrielsalem/openroutercredits/
 ├── ConfigActivity.kt       # key entry screen
 ├── WidgetUpdateScheduler.kt# WorkManager 15-min periodic update
 ├── UsageStore.kt           # local 24h spend series (for the sparkline)
-├── ActivityStore.kt        # derive today/7d/top-models from /activity
-└── WidgetCharts.kt         # sparkline + bar chart bitmaps
+├── ActivityStore.kt        # derive today/7d/top-models/last-model from /activity
+├── Theme.kt                # 7 predefined color schemes + dynamic background drawable
+└── WidgetCharts.kt         # sparkline + bar chart bitmaps (theme-aware colors)
 ```
 
 ## ⚠️ Personal project — no maintenance guarantee
