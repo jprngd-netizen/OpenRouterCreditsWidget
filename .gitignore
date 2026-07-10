@@ -11,3 +11,6 @@ local.properties
 node_modules/
 *.apk
 build/
+
+# handoff interno (nao vai pro github)
+AGENTS.md
