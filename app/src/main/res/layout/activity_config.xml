@@ -220,6 +220,37 @@
             app:icon="@android:drawable/ic_menu_save"
             app:iconGravity="textStart" />
 
+        <!-- ===== Link: Star on GitHub ===== -->
+        <LinearLayout
+            android:id="@+id/githubLink"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:clickable="true"
+            android:focusable="true"
+            android:padding="16dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="24dp"
+            android:background="?attr/selectableItemBackground">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="⭐"
+                android:textSize="16sp"
+                android:layout_marginEnd="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Star on GitHub"
+                android:textSize="14sp"
+                android:textColor="#4CC2FF"
+                android:textStyle="bold" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </ScrollView>

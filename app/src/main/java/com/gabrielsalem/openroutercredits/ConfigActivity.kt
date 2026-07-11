@@ -5,6 +5,7 @@ import android.content.Intent
 import android.content.res.ColorStateList
 import android.graphics.Color
 import android.graphics.drawable.GradientDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.view.Gravity
 import android.view.View
@@ -69,6 +70,12 @@ class ConfigActivity : AppCompatActivity() {
 
         alphaSlider.addOnChangeListener { _, value, _ ->
             alphaLabel.text = getString(R.string.config_alpha_percent, value.toInt())
+        }
+
+        // --- Star on GitHub ---
+        findViewById<View>(R.id.githubLink).setOnClickListener {
+            val url = "https://github.com/jprngd-netizen/OpenRouterCreditsWidget"
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
         }
 
         // --- Save ---
