@@ -14,3 +14,8 @@ build/
 
 # handoff interno (nao vai pro github)
 AGENTS.md
+
+# Gradle wrapper — necessário para build em clone fresco
+!gradlew
+!gradlew.bat
+!gradle/wrapper/gradle-wrapper.jar
