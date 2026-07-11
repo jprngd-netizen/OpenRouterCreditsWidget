@@ -8,7 +8,7 @@ data class WidgetData(
     val spentToday: Double,
     val last7Days: List<Pair<String, Double>>,
     val topModels: List<Pair<String, Double>>,
-    val lastModel: Triple<String, Double, String>?,
+    val lastModel: LastModelInfo?,
     val sparklineSeries: List<Pair<Long, Double>>,
     val total24h: Double,
     val activity: List<ActivityItem>

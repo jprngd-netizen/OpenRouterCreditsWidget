@@ -3,6 +3,12 @@ package com.gabrielsalem.openroutercredits
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
+data class LastModelInfo(
+    val model: String,
+    val spent: Double,
+    val date: String
+)
+
 /**
  * Processa a resposta de /activity (granularidade DIÁRIA) e deriva os valores
  * exibidos no widget: gasto de hoje, total dos últimos 7 dias e a série 7d.
@@ -49,7 +55,7 @@ object ActivityStore {
      * é DIÁRIO, não horário, então não dá pra saber a última chamada exata).
      * Retorna (modelo, gasto do dia, data) ou null se não houver atividade.
      */
-    fun lastModel(items: List<ActivityItem>): Triple<String, Double, String>? {
+    fun lastModel(items: List<ActivityItem>): LastModelInfo? {
         if (items.isEmpty()) return null
         val latestDate = items.maxOf { it.date }
         val dayItems = items.filter { it.date == latestDate }
@@ -57,6 +63,6 @@ object ActivityStore {
             .mapValues { (_, v) -> v.sumOf { it.usage } }
             .toList()
             .maxByOrNull { it.second } ?: return null
-        return Triple(model, spent, latestDate)
+        return LastModelInfo(model, spent, latestDate)
     }
 }

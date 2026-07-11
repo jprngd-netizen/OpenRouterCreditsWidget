@@ -6,6 +6,9 @@ import android.content.Context
 import android.content.Intent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 
 class CreditsWidgetProvider : AppWidgetProvider() {
@@ -36,6 +39,7 @@ class CreditsWidgetProvider : AppWidgetProvider() {
     override fun onDisabled(context: Context) {
         super.onDisabled(context)
         WidgetUpdateScheduler.cancel(context)
+        ioScope.cancel()
     }
 
     override fun onReceive(context: Context, intent: Intent) {
@@ -53,6 +57,9 @@ class CreditsWidgetProvider : AppWidgetProvider() {
 
     companion object {
         const val ACTION_REFRESH = "com.gabrielsalem.openroutercredits.ACTION_REFRESH"
+
+        private var fetchJob: Job? = null
+        private val ioScope = CoroutineScope(SupervisorJob() + Dispatchers.IO)
 
         fun updateWidget(
             context: Context,
@@ -75,7 +82,8 @@ class CreditsWidgetProvider : AppWidgetProvider() {
             val loadingRv = WidgetRenderer.renderLoading(context, theme, bgAlpha, cachedCredits)
             appWidgetManager.updateAppWidget(appWidgetId, loadingRv)
 
-            CoroutineScope(Dispatchers.IO).launch {
+            fetchJob?.cancel()
+            fetchJob = ioScope.launch {
                 try {
                     val data = WidgetDataFetcher.fetch(context, key)
                     WidgetStateManager.saveCredits(context, data.remainingCredits)

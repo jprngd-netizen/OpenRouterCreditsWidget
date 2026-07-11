@@ -167,8 +167,8 @@ object WidgetRenderer {
         if (tier != Tier.COMPACT) {
             val last = data.lastModel
             if (last != null) {
-                val name = last.first.split('/').last()
-                val spent = "%.3f".format(last.second)
+                val name = last.model.split('/').last()
+                val spent = "%.3f".format(last.spent)
                 rv.setTextViewText(
                     R.id.last_model,
                     String.format(context.getString(R.string.last_model_prefix), name, spent)
