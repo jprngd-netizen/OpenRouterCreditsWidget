@@ -164,7 +164,7 @@ Your next move: approve, or run a high-accuracy review first. Full execution det
   - Evidence: .omo/evidence/task-2-revisao-codigo.txt (grep output + build log)
   Commit: Y | `refactor(i18n): migrar strings hardcoded para string.xml PT-BR`
 
-- [ ] 3. Substituir JSONObject/JSONArray manual por Gson no UsageStore
+- [x] 3. Substituir JSONObject/JSONArray manual por Gson no UsageStore
   What to do / Must NOT do:
   - Em UsageStore.kt:
     - Criar data class pública top-level (fora do object) `UsagePoint(val t: Long, val total: Double)` — Gson serializa sem adapter
