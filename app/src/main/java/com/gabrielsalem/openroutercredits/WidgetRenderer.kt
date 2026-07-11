@@ -8,8 +8,8 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.graphics.drawable.Drawable
-import android.os.Build
 import android.os.Bundle
+import android.util.LruCache
 import android.view.View
 import android.widget.RemoteViews
 import java.text.SimpleDateFormat
@@ -20,24 +20,37 @@ object WidgetRenderer {
 
     enum class Tier { COMPACT, MEDIUM, FULL }
 
+    /** Cache de bitmaps de fundo para evitar recriação por update. */
+    private val backgroundCache = object : LruCache<String, Bitmap>(50) {
+        override fun sizeOf(key: String, bitmap: Bitmap): Int =
+            bitmap.allocationByteCount / 1024
+    }
+
+    private fun getCachedBackground(theme: WidgetTheme, bgAlpha: Int, width: Int, height: Int): Bitmap {
+        val key = "${theme.id}_${bgAlpha}_${width}_${height}"
+        return backgroundCache.get(key) ?: run {
+            val bmp = drawableToBitmap(backgroundDrawable(theme, bgAlpha), width, height)
+            backgroundCache.put(key, bmp)
+            bmp
+        }
+    }
+
     /** Decide o nível de detalhe conforme o tamanho do widget (dp). */
     fun layoutTier(opts: Bundle?): Tier {
         val w = opts?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 0) ?: 0
         val h = opts?.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 0) ?: 0
         return when {
-            w >= 250 && h >= 180 -> Tier.FULL   // 4x4+
-            w >= 200 && h >= 140 -> Tier.MEDIUM // 3x3+
-            else -> Tier.COMPACT                // 2x2 / pequeno
+            w >= WidgetConstants.TIER_FULL_MIN_WIDTH && h >= WidgetConstants.TIER_FULL_MIN_HEIGHT -> Tier.FULL
+            w >= WidgetConstants.TIER_MEDIUM_MIN_WIDTH && h >= WidgetConstants.TIER_MEDIUM_MIN_HEIGHT -> Tier.MEDIUM
+            else -> Tier.COMPACT
         }
     }
 
     /** Renderiza um Drawable (fundo com alpha) em Bitmap para o RemoteViews. */
-    fun drawableToBitmap(drawable: Drawable): Bitmap {
-        val w = 600
-        val h = 400
-        val bmp = Bitmap.createBitmap(w, h, Bitmap.Config.ARGB_8888)
+    fun drawableToBitmap(drawable: Drawable, width: Int = WidgetConstants.BITMAP_DEFAULT_WIDTH, height: Int = WidgetConstants.BITMAP_DEFAULT_HEIGHT): Bitmap {
+        val bmp = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888)
         val canvas = Canvas(bmp)
-        drawable.setBounds(0, 0, w, h)
+        drawable.setBounds(0, 0, width, height)
         drawable.draw(canvas)
         return bmp
     }
@@ -47,9 +60,7 @@ object WidgetRenderer {
             action = CreditsWidgetProvider.ACTION_REFRESH
             putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, id)
         }
-        val flags = PendingIntent.FLAG_UPDATE_CURRENT or
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    PendingIntent.FLAG_IMMUTABLE else 0
+        val flags = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         return PendingIntent.getBroadcast(context, id, intent, flags)
     }
 
@@ -63,7 +74,7 @@ object WidgetRenderer {
         cachedCredits: String?
     ): RemoteViews {
         val rv = RemoteViews(context.packageName, R.layout.widget_credits)
-        rv.setImageViewBitmap(R.id.bg, drawableToBitmap(backgroundDrawable(theme, bgAlpha)))
+        rv.setImageViewBitmap(R.id.bg, getCachedBackground(theme, bgAlpha, WidgetConstants.BITMAP_DEFAULT_WIDTH, WidgetConstants.BITMAP_DEFAULT_HEIGHT))
         rv.setTextColor(R.id.credits, Color.parseColor(theme.text))
         rv.setTextColor(R.id.title, Color.parseColor(theme.title))
         rv.setTextColor(R.id.updated, Color.parseColor(theme.subText))
@@ -78,7 +89,7 @@ object WidgetRenderer {
         appWidgetId: Int
     ): RemoteViews {
         val rv = RemoteViews(context.packageName, R.layout.widget_credits)
-        rv.setImageViewBitmap(R.id.bg, drawableToBitmap(backgroundDrawable(theme, bgAlpha)))
+        rv.setImageViewBitmap(R.id.bg, getCachedBackground(theme, bgAlpha, WidgetConstants.BITMAP_DEFAULT_WIDTH, WidgetConstants.BITMAP_DEFAULT_HEIGHT))
         rv.setTextColor(R.id.credits, Color.parseColor(theme.text))
         rv.setTextColor(R.id.title, Color.parseColor(theme.title))
         rv.setTextColor(R.id.updated, Color.parseColor(theme.subText))
@@ -107,7 +118,7 @@ object WidgetRenderer {
         val titleCol = Color.parseColor(theme.title)
         val now = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
 
-        rv.setImageViewBitmap(R.id.bg, drawableToBitmap(backgroundDrawable(theme, bgAlpha)))
+        rv.setImageViewBitmap(R.id.bg, getCachedBackground(theme, bgAlpha, WidgetConstants.BITMAP_DEFAULT_WIDTH, WidgetConstants.BITMAP_DEFAULT_HEIGHT))
         rv.setTextColor(R.id.credits, textCol)
         rv.setTextColor(R.id.title, titleCol)
         rv.setTextColor(R.id.updated, subTextCol)
@@ -204,7 +215,7 @@ object WidgetRenderer {
         message: String
     ): RemoteViews {
         val rv = RemoteViews(context.packageName, R.layout.widget_credits)
-        rv.setImageViewBitmap(R.id.bg, drawableToBitmap(backgroundDrawable(theme, bgAlpha)))
+        rv.setImageViewBitmap(R.id.bg, getCachedBackground(theme, bgAlpha, WidgetConstants.BITMAP_DEFAULT_WIDTH, WidgetConstants.BITMAP_DEFAULT_HEIGHT))
         rv.setTextColor(R.id.credits, Color.parseColor(theme.text))
         rv.setTextColor(R.id.title, Color.parseColor(theme.title))
         rv.setTextColor(R.id.updated, Color.parseColor(theme.subText))

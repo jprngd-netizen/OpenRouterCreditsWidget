@@ -190,7 +190,7 @@ Your next move: approve, or run a high-accuracy review first. Full execution det
   - Evidence: .omo/evidence/task-3-revisao-codigo.txt (build log + grep output)
   Commit: Y | `refactor(store): substituir JSONObject manual por Gson no UsageStore`
 
-- [ ] 4. Criar WidgetStateManager com cache offline do último valor conhecido
+- [x] 4. Criar WidgetStateManager com cache offline do último valor conhecido
   What to do / Must NOT do:
   - Criar `app/src/main/java/com/gabrielsalem/openroutercredits/WidgetStateManager.kt`:
     ```kotlin
@@ -249,7 +249,7 @@ Your next move: approve, or run a high-accuracy review first. Full execution det
   - Evidence: .omo/evidence/task-4-revisao-codigo.txt (build log)
   Commit: Y | `feat(cache): adicionar WidgetStateManager com cache offline do saldo`
 
-- [ ] 5. Extrair WidgetDataFetcher com chamadas API + processamento
+- [x] 5. Extrair WidgetDataFetcher com chamadas API + processamento
   What to do / Must NOT do:
   - Criar `app/src/main/java/com/gabrielsalem/openroutercredits/WidgetDataFetcher.kt`:
     ```kotlin
@@ -316,7 +316,7 @@ Your next move: approve, or run a high-accuracy review first. Full execution det
   - Evidence: .omo/evidence/task-5-revisao-codigo.txt (grep + build log)
   Commit: Y | `refactor(data): extrair WidgetDataFetcher com fetch + processamento`
 
-- [ ] 6. Extrair WidgetRenderer para construção de RemoteViews
+- [x] 6. Extrair WidgetRenderer para construção de RemoteViews
   What to do / Must NOT do:
   - Criar `app/src/main/java/com/gabrielsalem/openroutercredits/WidgetRenderer.kt`:
     ```kotlin

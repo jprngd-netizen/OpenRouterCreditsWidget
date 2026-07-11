@@ -13,3 +13,5 @@
 - [x] Gerar Gradle wrapper completo e criar proguard-rules.pro real
 
 ## 2026-07-11 T3 complete: UsageStore migrado de JSONObject para Gson
+
+## 2026-07-11 T4 complete: WidgetStateManager criado com cache offline SharedPreferences

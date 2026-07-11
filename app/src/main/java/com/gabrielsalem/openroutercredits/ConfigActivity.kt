@@ -2,7 +2,6 @@ package com.gabrielsalem.openroutercredits
 
 import android.appwidget.AppWidgetManager
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.view.View
 import android.widget.ArrayAdapter
@@ -96,8 +95,7 @@ class ConfigActivity : AppCompatActivity() {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK
             }
             val flags = android.app.PendingIntent.FLAG_UPDATE_CURRENT or
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M)
-                    android.app.PendingIntent.FLAG_IMMUTABLE else 0
+                    android.app.PendingIntent.FLAG_IMMUTABLE
             return android.app.PendingIntent.getActivity(
                 context,
                 appWidgetId + 1000,
