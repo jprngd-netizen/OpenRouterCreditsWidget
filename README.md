@@ -58,16 +58,23 @@ Sideload the debug APK or build a release and install it. Then:
 
 ```
 app/src/main/java/com/gabrielsalem/openroutercredits/
-├── OpenRouterApi.kt        # Retrofit interface + data models
-├── ApiClient.kt            # singleton Retrofit instance
-├── Prefs.kt                # EncryptedSharedPreferences per widget id
-├── CreditsWidgetProvider.kt# AppWidgetProvider: fetch, layout tiers, refresh
-├── ConfigActivity.kt       # key entry screen
-├── WidgetUpdateScheduler.kt# WorkManager 15-min periodic update
-├── UsageStore.kt           # local 24h spend series (for the sparkline)
-├── ActivityStore.kt        # derive today/7d/top-models/last-model from /activity
-├── Theme.kt                # 7 predefined color schemes + dynamic background drawable
-└── WidgetCharts.kt         # sparkline + bar chart bitmaps (theme-aware colors)
+├── OpenRouterApi.kt          # Retrofit interface + data models (ActivityItem, CreditsResponse)
+├── ApiClient.kt              # Singleton Retrofit instance
+├── Prefs.kt                  # EncryptedSharedPreferences per widget id (API key, theme, alpha)
+├── ConfigActivity.kt         # Key entry screen + theme/alpha config
+├── WidgetUpdateScheduler.kt  # WorkManager 15-min periodic update
+│
+├── UsageStore.kt             # Local 24h spend series (Gson persistence)
+├── ActivityStore.kt          # Derive today/7d/top-models/last-model from /activity
+├── Theme.kt                  # 7 predefined color schemes + background drawable
+├── WidgetCharts.kt           # Sparkline + bar chart bitmaps (theme-aware colors)
+│
+├── WidgetConstants.kt        # Named constants (tier thresholds, padding, bitmap config)
+├── WidgetStateManager.kt     # Offline cache via SharedPreferences (last known credits)
+├── WidgetDataFetcher.kt      # API fetch + data processing → WidgetData
+├── WidgetRenderer.kt         # RemoteViews construction (renderLoading/NoKey/Content/Error)
+│
+└── CreditsWidgetProvider.kt  # AppWidgetProvider: orchestrator (~102 linhas)
 ```
 
 ## ⚠️ Personal project — no maintenance guarantee
