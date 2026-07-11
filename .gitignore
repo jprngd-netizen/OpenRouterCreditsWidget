@@ -15,6 +15,12 @@ build/
 # handoff interno (nao vai pro github)
 AGENTS.md
 
+# Release signing (NUNCA versionar)
+upload-keystore.jks
+keystore.properties
+app/upload-keystore.jks
+app/keystore.properties
+
 # Gradle wrapper — necessário para build em clone fresco
 !gradlew
 !gradlew.bat

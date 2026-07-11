@@ -3,6 +3,17 @@ plugins {
     id("org.jetbrains.kotlin.android")
 }
 
+// ---- Release signing ----
+val keystorePropsFile = rootProject.file("keystore.properties")
+val keystoreProps = mutableMapOf<String, String>().apply {
+    if (keystorePropsFile.exists()) {
+        keystorePropsFile.readLines().forEach { line ->
+            val parts = line.split("=", limit = 2)
+            if (parts.size == 2) put(parts[0].trim(), parts[1].trim())
+        }
+    }
+}
+
 android {
     namespace = "com.gabrielsalem.openroutercredits"
     compileSdk = 34
@@ -15,10 +26,22 @@ android {
         versionName = "1.0"
     }
 
+    signingConfigs {
+        create("release") {
+            storeFile = rootProject.file(
+                keystoreProps.getOrDefault("storeFile", "app/upload-keystore.jks")
+            )
+            storePassword = keystoreProps.getOrDefault("storePassword", "")
+            keyAlias = keystoreProps.getOrDefault("keyAlias", "")
+            keyPassword = keystoreProps.getOrDefault("keyPassword", "")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 

@@ -216,38 +216,97 @@
             app:backgroundTint="#4CC2FF"
             android:textColor="#1E1E1E"
             android:layout_marginTop="8dp"
-            android:layout_marginBottom="32dp"
+            android:layout_marginBottom="8dp"
             app:icon="@android:drawable/ic_menu_save"
             app:iconGravity="textStart" />
 
-        <!-- ===== Link: Star on GitHub ===== -->
+        <!-- ===== Footer: About / Rate / GitHub ===== -->
         <LinearLayout
-            android:id="@+id/githubLink"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:orientation="vertical"
             android:gravity="center"
-            android:orientation="horizontal"
-            android:clickable="true"
-            android:focusable="true"
-            android:padding="16dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginBottom="24dp"
-            android:background="?attr/selectableItemBackground">
+            android:layout_marginTop="12dp"
+            android:layout_marginBottom="32dp">
 
+            <!-- Version -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="⭐"
-                android:textSize="16sp"
-                android:layout_marginEnd="8dp" />
+                android:text="OR Credits v1.6"
+                android:textSize="12sp"
+                android:textColor="#666666" />
 
+            <!-- Links row -->
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:layout_marginTop="8dp">
+
+                <TextView
+                    android:id="@+id/aboutLink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sobre"
+                    android:textSize="13sp"
+                    android:textColor="#4CC2FF"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="·"
+                    android:textSize="13sp"
+                    android:textColor="#666666"
+                    android:paddingHorizontal="4dp" />
+
+                <TextView
+                    android:id="@+id/rateLink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Avaliar"
+                    android:textSize="13sp"
+                    android:textColor="#4CC2FF"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="·"
+                    android:textSize="13sp"
+                    android:textColor="#666666"
+                    android:paddingHorizontal="4dp" />
+
+                <TextView
+                    android:id="@+id/githubLink"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="GitHub"
+                    android:textSize="13sp"
+                    android:textColor="#4CC2FF"
+                    android:padding="8dp"
+                    android:clickable="true"
+                    android:focusable="true"
+                    android:background="?attr/selectableItemBackground" />
+
+            </LinearLayout>
+
+            <!-- Disclaimer -->
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Star on GitHub"
-                android:textSize="14sp"
-                android:textColor="#4CC2FF"
-                android:textStyle="bold" />
+                android:text="Projeto pessoal · sem garantias"
+                android:textSize="11sp"
+                android:textColor="#555555"
+                android:layout_marginTop="8dp" />
 
         </LinearLayout>
 

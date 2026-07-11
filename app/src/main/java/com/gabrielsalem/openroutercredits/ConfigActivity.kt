@@ -12,6 +12,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.slider.Slider
@@ -72,10 +73,19 @@ class ConfigActivity : AppCompatActivity() {
             alphaLabel.text = getString(R.string.config_alpha_percent, value.toInt())
         }
 
-        // --- Star on GitHub ---
+        // --- Footer: GitHub ---
         findViewById<View>(R.id.githubLink).setOnClickListener {
-            val url = "https://github.com/jprngd-netizen/OpenRouterCreditsWidget"
-            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+            openUrl("https://github.com/jprngd-netizen/OpenRouterCreditsWidget")
+        }
+
+        // --- Footer: About ---
+        findViewById<View>(R.id.aboutLink).setOnClickListener {
+            showAboutDialog()
+        }
+
+        // --- Footer: Rate ---
+        findViewById<View>(R.id.rateLink).setOnClickListener {
+            openUrl("https://play.google.com/store/apps/details?id=$packageName")
         }
 
         // --- Save ---
@@ -197,6 +207,38 @@ class ConfigActivity : AppCompatActivity() {
 
         card.addView(inner)
         return card
+    }
+
+    private fun openUrl(url: String) {
+        try {
+            startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(url)))
+        } catch (_: Exception) {
+            // no browser available — silently ignore
+        }
+    }
+
+    private fun showAboutDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Sobre o OR Credits")
+            .setMessage(
+                """
+                OR Credits Widget v1.6
+                
+                Um widget Android que exibe o saldo de créditos e uso recente da API OpenRouter diretamente na tela inicial.
+                
+                Código-fonte: github.com/jprngd-netizen/OpenRouterCreditsWidget
+                
+                ⚠️ Projeto pessoal — sem garantias.
+                O autor não se responsabiliza por danos decorrentes do uso deste aplicativo.
+                
+                🔒 Privacidade
+                Este app NÃO coleta, armazena ou transmite dados pessoais.
+                A chave de API fornecida pelo usuário é armazenada localmente no dispositivo (criptografada) e usada exclusivamente para consultar a API da OpenRouter.
+                Nenhum dado é enviado a terceiros.
+                """.trimIndent()
+            )
+            .setPositiveButton("OK", null)
+            .show()
     }
 
     companion object {
