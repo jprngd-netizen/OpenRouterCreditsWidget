@@ -89,7 +89,7 @@ class CreditsWidgetProvider : AppWidgetProvider() {
             loading.setTextColor(R.id.credits, Color.parseColor(theme.text))
             loading.setTextColor(R.id.title, Color.parseColor(theme.title))
             loading.setTextColor(R.id.updated, Color.parseColor(theme.subText))
-            loading.setTextViewText(R.id.credits, "…")
+            loading.setTextViewText(R.id.credits, context.getString(R.string.credits_loading))
             appWidgetManager.updateAppWidget(appWidgetId, loading)
 
             val key = Prefs.getKey(context, appWidgetId)
@@ -105,8 +105,8 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                 rv.setTextColor(R.id.credits, textCol)
                 rv.setTextColor(R.id.title, titleCol)
                 rv.setTextColor(R.id.updated, subTextCol)
-                rv.setTextViewText(R.id.credits, "set key")
-                rv.setTextViewText(R.id.updated, "toque p/ configurar")
+                rv.setTextViewText(R.id.credits, context.getString(R.string.credits_no_key))
+                rv.setTextViewText(R.id.updated, context.getString(R.string.credits_no_key_hint))
                 rv.setViewVisibility(R.id.sparkline, View.GONE)
                 rv.setViewVisibility(R.id.bars7d, View.GONE)
                 rv.setViewVisibility(R.id.top_models, View.GONE)
@@ -176,8 +176,8 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                         val last = ActivityStore.lastModel(activity)
                         if (last != null) {
                             val name = last.first.split('/').last()
-                            val spent = "$${"%.3f".format(last.second)}"
-                            rv.setTextViewText(R.id.last_model, "último: $name · $spent")
+                            val spent = "%.3f".format(last.second)
+                            rv.setTextViewText(R.id.last_model, String.format(context.getString(R.string.last_model_prefix), name, spent))
                             rv.setTextColor(R.id.last_model, Color.parseColor(theme.accentDim))
                             rv.setViewVisibility(R.id.last_model, View.VISIBLE)
                         } else {
@@ -189,14 +189,14 @@ class CreditsWidgetProvider : AppWidgetProvider() {
 
                     // linha de status adaptada ao tier
                     val status = when (tier) {
-                        Tier.FULL -> "hoje $${"%.4f".format(spentToday ?: 0.0)} · 24h $${"%.4f".format(total24)} · $now"
-                        Tier.MEDIUM -> "24h $${"%.4f".format(total24)} · $now"
+                        Tier.FULL -> String.format(context.getString(R.string.status_full), spentToday ?: 0.0, total24, now)
+                        Tier.MEDIUM -> String.format(context.getString(R.string.status_medium), total24, now)
                         Tier.COMPACT -> now
                     }
                     rv.setTextViewText(R.id.updated, status)
 
                     if (spentToday != null) {
-                        rv.setTextViewText(R.id.spent_today, "hoje $${"%.2f".format(spentToday)}")
+                        rv.setTextViewText(R.id.spent_today, String.format(context.getString(R.string.spent_today), spentToday))
                         rv.setViewVisibility(R.id.spent_today, View.VISIBLE)
                     } else {
                         rv.setViewVisibility(R.id.spent_today, View.GONE)
@@ -211,7 +211,7 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                     rv.setTextColor(R.id.credits, textCol)
                     rv.setTextColor(R.id.title, titleCol)
                     rv.setTextColor(R.id.updated, subTextCol)
-                    rv.setTextViewText(R.id.credits, "erro")
+                    rv.setTextViewText(R.id.credits, context.getString(R.string.credits_error))
                     rv.setTextViewText(R.id.updated, (e.message ?: "falha").take(24))
                     rv.setViewVisibility(R.id.sparkline, View.GONE)
                     rv.setViewVisibility(R.id.bars7d, View.GONE)

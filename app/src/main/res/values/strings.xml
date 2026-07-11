@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="credits_loading">…</string>
+    <string name="credits_no_key">sem chave</string>
+    <string name="credits_no_key_hint">toque p/ configurar</string>
+    <string name="credits_error">erro</string>
+    <string name="last_model_prefix">último: %1$s · %2$s</string>
+    <string name="status_full">hoje $%1$.4f · 24h $%2$.4f · %3$s</string>
+    <string name="status_medium">24h $%1$.4f · %2$s</string>
+    <string name="config_alpha_label">Transparência do fundo: %d%%</string>
+    <string name="config_key_empty_error">Informe a API key</string>
+    <string name="spent_today">hoje $%.2f</string>
+</resources>

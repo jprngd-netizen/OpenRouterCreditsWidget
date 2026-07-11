@@ -57,11 +57,11 @@ class ConfigActivity : AppCompatActivity() {
 
         val existingAlpha = Prefs.getBgAlpha(this, appWidgetId)
         alphaSeek.progress = existingAlpha
-        alphaLabel.text = "Transparência do fundo: $existingAlpha%"
+        alphaLabel.text = String.format(getString(R.string.config_alpha_label), existingAlpha)
 
         alphaSeek.setOnSeekBarChangeListener(object : SeekBar.OnSeekBarChangeListener {
             override fun onProgressChanged(s: SeekBar?, p: Int, fromUser: Boolean) {
-                alphaLabel.text = "Transparência do fundo: $p%"
+                alphaLabel.text = String.format(getString(R.string.config_alpha_label), p)
             }
             override fun onStartTrackingTouch(s: SeekBar?) {}
             override fun onStopTrackingTouch(s: SeekBar?) {}
@@ -70,7 +70,7 @@ class ConfigActivity : AppCompatActivity() {
         btn.setOnClickListener {
             val key = edit.text.toString().trim()
             if (key.isEmpty()) {
-                edit.error = "Informe a API key"
+                edit.error = getString(R.string.config_key_empty_error)
                 return@setOnClickListener
             }
             Prefs.setKey(this, appWidgetId, key)
