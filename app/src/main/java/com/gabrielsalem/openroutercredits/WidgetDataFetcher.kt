@@ -23,7 +23,9 @@ object WidgetDataFetcher {
         val remaining = credits.data.remaining_credits
             ?: (credits.data.total_credits - credits.data.total_usage)
 
-        UsageStore.record(context, credits.data.total_usage)
+        val currentTotal = credits.data.total_usage
+        UsageStore.seedFromActivity(context, activity, currentTotal)
+        UsageStore.record(context, currentTotal)
         val series = UsageStore.series(context)
         val total24h = UsageStore.total24h(context)
 
