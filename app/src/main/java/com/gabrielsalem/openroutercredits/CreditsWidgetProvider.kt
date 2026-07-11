@@ -118,13 +118,12 @@ class CreditsWidgetProvider : AppWidgetProvider() {
 
             CoroutineScope(Dispatchers.IO).launch {
                 try {
-                    val credits = ApiClient.api.getCredits("Bearer $key")
-                    val activity = runCatching { ApiClient.api.getActivity("Bearer $key") }
-                        .getOrNull()?.data ?: emptyList()
-
-                    val remaining = credits.data.remaining_credits
-                        ?: (credits.data.total_credits - credits.data.total_usage)
-                    val text = "$%.4f".format(remaining)
+                    val data = WidgetDataFetcher.fetch(context, key)
+                    val accent = Color.parseColor(theme.accent)
+                    val accentDim = Color.parseColor(theme.accentDim)
+                    val textCol = Color.parseColor(theme.text)
+                    val subTextCol = Color.parseColor(theme.subText)
+                    val titleCol = Color.parseColor(theme.title)
                     val now = SimpleDateFormat("HH:mm:ss", Locale.getDefault()).format(Date())
 
                     val rv = RemoteViews(context.packageName, R.layout.widget_credits)
@@ -132,25 +131,20 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                     rv.setTextColor(R.id.credits, textCol)
                     rv.setTextColor(R.id.title, titleCol)
                     rv.setTextColor(R.id.updated, subTextCol)
-                    rv.setTextColor(R.id.spent_today, Color.parseColor(theme.accent))
-                    rv.setTextViewText(R.id.credits, text)
+                    rv.setTextColor(R.id.spent_today, accent)
+                    rv.setTextViewText(R.id.credits, data.creditsText)
 
-                    // sparkline de tempo real (derivação local entre polls)
-                    UsageStore.record(context, credits.data.total_usage)
-                    val series = UsageStore.series(context)
-                    val total24 = UsageStore.total24h(context)
-                    if (tier != Tier.COMPACT && series.size >= 2) {
-                        rv.setImageViewBitmap(R.id.sparkline, WidgetCharts.sparkline(series, 600, 96, accent))
+                    // sparkline
+                    if (tier != Tier.COMPACT && data.sparklineSeries.size >= 2) {
+                        rv.setImageViewBitmap(R.id.sparkline, WidgetCharts.sparkline(data.sparklineSeries, 600, 96, accent))
                         rv.setViewVisibility(R.id.sparkline, View.VISIBLE)
                     } else {
                         rv.setViewVisibility(R.id.sparkline, View.GONE)
                     }
 
-                    // barras 7 dias + gasto hoje (via /activity)
-                    val spentToday = if (activity.isNotEmpty()) ActivityStore.spentToday(activity) else null
-                    val last7 = ActivityStore.last7Days(activity)
-                    if (tier == Tier.FULL && last7.any { it.second > 0.0 }) {
-                        rv.setImageViewBitmap(R.id.bars7d, WidgetCharts.bars(last7, 600, 160, accent, accentDim))
+                    // barras 7 dias
+                    if (tier == Tier.FULL && data.last7Days.any { it.second > 0.0 }) {
+                        rv.setImageViewBitmap(R.id.bars7d, WidgetCharts.bars(data.last7Days, 600, 160, accent, accentDim))
                         rv.setViewVisibility(R.id.bars7d, View.VISIBLE)
                     } else {
                         rv.setViewVisibility(R.id.bars7d, View.GONE)
@@ -158,9 +152,8 @@ class CreditsWidgetProvider : AppWidgetProvider() {
 
                     // top modelos (só FULL)
                     if (tier == Tier.FULL) {
-                        val top = ActivityStore.topModels(activity, 3)
-                        if (top.isNotEmpty()) {
-                            val s = top.joinToString("  ") { "${it.first.split('/').last()}:$${"%.3f".format(it.second)}" }
+                        if (data.topModels.isNotEmpty()) {
+                            val s = data.topModels.joinToString("  ") { "${it.first.split('/').last()}:$${"%.3f".format(it.second)}" }
                             rv.setTextViewText(R.id.top_models, s)
                             rv.setTextColor(R.id.top_models, subTextCol)
                             rv.setViewVisibility(R.id.top_models, View.VISIBLE)
@@ -171,14 +164,14 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                         rv.setViewVisibility(R.id.top_models, View.GONE)
                     }
 
-                    // último modelo usado (proxy: modelo de maior usage no dia mais recente)
+                    // último modelo
                     if (tier != Tier.COMPACT) {
-                        val last = ActivityStore.lastModel(activity)
+                        val last = data.lastModel
                         if (last != null) {
                             val name = last.first.split('/').last()
                             val spent = "%.3f".format(last.second)
                             rv.setTextViewText(R.id.last_model, String.format(context.getString(R.string.last_model_prefix), name, spent))
-                            rv.setTextColor(R.id.last_model, Color.parseColor(theme.accentDim))
+                            rv.setTextColor(R.id.last_model, accentDim)
                             rv.setViewVisibility(R.id.last_model, View.VISIBLE)
                         } else {
                             rv.setViewVisibility(R.id.last_model, View.GONE)
@@ -187,16 +180,16 @@ class CreditsWidgetProvider : AppWidgetProvider() {
                         rv.setViewVisibility(R.id.last_model, View.GONE)
                     }
 
-                    // linha de status adaptada ao tier
+                    // status line
                     val status = when (tier) {
-                        Tier.FULL -> String.format(context.getString(R.string.status_full), spentToday ?: 0.0, total24, now)
-                        Tier.MEDIUM -> String.format(context.getString(R.string.status_medium), total24, now)
+                        Tier.FULL -> String.format(context.getString(R.string.status_full), data.spentToday, data.total24h, now)
+                        Tier.MEDIUM -> String.format(context.getString(R.string.status_medium), data.total24h, now)
                         Tier.COMPACT -> now
                     }
                     rv.setTextViewText(R.id.updated, status)
 
-                    if (spentToday != null) {
-                        rv.setTextViewText(R.id.spent_today, String.format(context.getString(R.string.spent_today), spentToday))
+                    if (data.spentToday > 0 && data.activity.isNotEmpty()) {
+                        rv.setTextViewText(R.id.spent_today, String.format(context.getString(R.string.spent_today), data.spentToday))
                         rv.setViewVisibility(R.id.spent_today, View.VISIBLE)
                     } else {
                         rv.setViewVisibility(R.id.spent_today, View.GONE)
