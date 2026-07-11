@@ -1,8 +1,7 @@
 package com.gabrielsalem.openroutercredits
 
 import android.content.Context
-import org.json.JSONArray
-import org.json.JSONObject
+import com.google.gson.Gson
 import kotlin.math.max
 
 /**
@@ -10,12 +9,12 @@ import kotlin.math.max
  * A OpenRouter não expõe histórico via API, então derivamos os deltas a cada poll:
  * usage_delta = total_usage_atual - total_usage_anterior.
  */
+data class UsagePoint(val t: Long, val total: Double)
+
 object UsageStore {
 
     private const val FILE = "usage_24h.json"
     private const val WINDOW_MS = 24L * 60 * 60 * 1000 // 24h
-
-    private data class Point(val t: Long, val total: Double)
 
     fun record(context: Context, totalUsage: Double) {
         val points = load(context).toMutableList()
@@ -25,7 +24,7 @@ object UsageStore {
             // resetou (conta recarregada) — descarta o ponto antigo p/ não gerar delta negativo
             points.clear()
         }
-        points.add(Point(now, totalUsage))
+        points.add(UsagePoint(now, totalUsage))
         // poda janela de 24h
         val cutoff = now - WINDOW_MS
         val pruned = points.filter { it.t >= cutoff }
@@ -47,31 +46,21 @@ object UsageStore {
     fun total24h(context: Context): Double =
         series(context).sumOf { it.second }
 
-    private fun load(context: Context): List<Point> {
+    private fun load(context: Context): List<UsagePoint> {
         return try {
             val txt = context.openFileInput(FILE).bufferedReader().use { it.readText() }
-            val arr = JSONArray(txt)
-            (0 until arr.length()).map { i ->
-                val o = arr.getJSONObject(i)
-                Point(o.getLong("t"), o.getDouble("total"))
-            }
+            Gson().fromJson(txt, Array<UsagePoint>::class.java).toList()
         } catch (_: Exception) {
             emptyList()
         }
     }
 
-    private fun save(context: Context, points: List<Point>) {
+    private fun save(context: Context, points: List<UsagePoint>) {
         try {
-            val arr = JSONArray()
-            points.forEach { p ->
-                arr.put(JSONObject().apply {
-                    put("t", p.t)
-                    put("total", p.total)
-                })
-            }
-            context.openFileOutput(FILE, Context.MODE_PRIVATE).use { it.write(arr.toString().toByteArray()) }
-        } catch (_: Exception) {
-            // falha de I/O silenciosa — gráfico fica vazio, widget continua funcional
+            val json = Gson().toJson(points)
+            context.openFileOutput(FILE, Context.MODE_PRIVATE).use { it.write(json.toByteArray()) }
+        } catch (e: Exception) {
+            android.util.Log.w("UsageStore", "failed to persist", e)
         }
     }
 }

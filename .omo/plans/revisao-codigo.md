@@ -78,7 +78,7 @@ Your next move: approve, or run a high-accuracy review first. Full execution det
 > Implementation + Test = ONE todo. Never separate.
 <!-- APPEND TASK BATCHES BELOW THIS LINE - never rewrite the headers above. -->
 
-- [ ] 1. Gerar Gradle wrapper completo e criar proguard-rules.pro
+- [x] 1. Gerar Gradle wrapper completo e criar proguard-rules.pro
   What to do / Must NOT do:
   - Rodar `cd /Users/gabriel.salem/android/OpenRouterCreditsWidget && ~/gradle89/gradle-8.9/bin/gradle wrapper --gradle-version 8.9` para gerar `gradlew`, `gradlew.bat`, `gradle/wrapper/gradle-wrapper.jar`
   - Atualizar `.gitignore`: remover a exclusão de `gradlew`, `gradlew.bat` e `gradle-wrapper.jar` OU adicionar exceções (`!gradlew`, `!gradlew.bat`, `!gradle/wrapper/gradle-wrapper.jar`)
@@ -116,7 +116,7 @@ Your next move: approve, or run a high-accuracy review first. Full execution det
   - Evidence: .omo/evidence/task-1-revisao-codigo.txt (build output)
   Commit: Y | `chore(build): gerar Gradle wrapper completo e criar proguard-rules.pro real`
 
-- [ ] 2. Criar string resources PT-BR e substituir strings hardcoded
+- [x] 2. Criar string resources PT-BR e substituir strings hardcoded
   What to do / Must NOT do:
   - Criar `app/src/main/res/values/strings.xml` com os seguintes recursos:
     - `widget_title` = "OpenRouter"
