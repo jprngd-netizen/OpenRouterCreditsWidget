@@ -8,6 +8,7 @@
     <string name="status_full">hoje $%1$.4f · 24h $%2$.4f · %3$s</string>
     <string name="status_medium">24h $%1$.4f · %2$s</string>
     <string name="config_alpha_label">Transparência do fundo: %d%%</string>
+    <string name="config_alpha_percent">%d%%</string>
     <string name="config_key_empty_error">Informe a API key</string>
     <string name="spent_today">hoje $%.2f</string>
 </resources>

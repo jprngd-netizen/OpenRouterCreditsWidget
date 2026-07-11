@@ -1,70 +1,225 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="24dp"
-    android:gravity="top"
-    android:scrollbars="vertical">
+    android:background="#1C1C1E"
+    android:fillViewport="true">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="OpenRouter API Key"
-        android:textSize="20sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Cole a chave sk-or-... do painel da OpenRouter"
-        android:textSize="12sp"
-        android:layout_marginTop="8dp" />
-
-    <EditText
-        android:id="@+id/keyInput"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:inputType="textPassword"
-        android:hint="sk-or-..."
-        android:layout_marginTop="16dp" />
+        android:orientation="vertical"
+        android:padding="16dp">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Esquema de cores"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginTop="20dp" />
+        <!-- ===== Header ===== -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="24dp">
 
-    <Spinner
-        android:id="@+id/themeSpinner"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" />
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Configurar Widget"
+                android:textSize="24sp"
+                android:textColor="#F2F2F2"
+                android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/alphaLabel"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Transparência do fundo: 85%"
-        android:textSize="14sp"
-        android:textStyle="bold"
-        android:layout_marginTop="20dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="OR Credits"
+                android:textSize="14sp"
+                android:textColor="#4CC2FF"
+                android:textStyle="bold" />
+        </LinearLayout>
 
-    <SeekBar
-        android:id="@+id/alphaSeek"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:min="0"
-        android:max="100"
-        android:progress="85"
-        android:layout_marginTop="8dp" />
+        <!-- ===== Card: API Key ===== -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="#2C2C30"
+            app:strokeColor="#3A3A3E"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="12dp">
 
-    <Button
-        android:id="@+id/saveBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Salvar"
-        android:layout_marginTop="24dp" />
-</LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="API Key"
+                    android:textSize="16sp"
+                    android:textColor="#F2F2F2"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Cole sua chave sk-or- do painel OpenRouter"
+                    android:textSize="13sp"
+                    android:textColor="#AAAAAA"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/keyInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    app:boxStrokeColor="#4CC2FF"
+                    app:boxStrokeWidth="2dp"
+                    app:hintTextColor="#4CC2FF"
+                    app:endIconMode="password_toggle">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/keyInput"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="sk-or-..."
+                        android:inputType="textPassword"
+                        android:textColor="#F2F2F2"
+                        android:textColorHint="#666666"
+                        android:textSize="15sp" />
+
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ===== Card: Tema ===== -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="#2C2C30"
+            app:strokeColor="#3A3A3E"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Tema"
+                    android:textSize="16sp"
+                    android:textColor="#F2F2F2"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Escolha o esquema de cores"
+                    android:textSize="13sp"
+                    android:textColor="#AAAAAA"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp" />
+
+                <!-- Preview cards container -->
+                <HorizontalScrollView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:scrollbars="none">
+
+                    <LinearLayout
+                        android:id="@+id/themePreviewContainer"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:paddingBottom="4dp" />
+
+                </HorizontalScrollView>
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ===== Card: Transparência ===== -->
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:cardElevation="4dp"
+            app:cardCornerRadius="16dp"
+            app:cardBackgroundColor="#2C2C30"
+            app:strokeColor="#3A3A3E"
+            app:strokeWidth="1dp"
+            android:layout_marginBottom="12dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="20dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Transparência do Fundo"
+                    android:textSize="16sp"
+                    android:textColor="#F2F2F2"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/alphaLabel"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="85%"
+                    android:textSize="13sp"
+                    android:textColor="#AAAAAA"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="16dp" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/alphaSlider"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:valueFrom="0"
+                    android:valueTo="100"
+                    android:value="85"
+                    app:thumbColor="#4CC2FF"
+                    app:trackColorActive="#4CC2FF"
+                    app:trackColorInactive="#3A3A3E"
+                    app:labelBehavior="gone" />
+
+            </LinearLayout>
+
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ===== Botão Salvar ===== -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/saveBtn"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:text="Salvar"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="16dp"
+            app:backgroundTint="#4CC2FF"
+            android:textColor="#1E1E1E"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="32dp"
+            app:icon="@android:drawable/ic_menu_save"
+            app:iconGravity="textStart" />
+
+    </LinearLayout>
+
+</ScrollView>

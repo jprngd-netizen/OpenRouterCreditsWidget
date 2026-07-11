@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema Material3 escuro para a ConfigActivity -->
+    <style name="Theme.ORCredits.Config" parent="Theme.Material3.Dark.NoActionBar">
+        <item name="colorPrimary">#4CC2FF</item>
+        <item name="colorOnPrimary">#1E1E1E</item>
+        <item name="colorSurface">#2A2A2E</item>
+        <item name="colorOnSurface">#F2F2F2</item>
+        <item name="colorOnSurfaceVariant">#AAAAAA</item>
+        <item name="colorOutline">#3A3A3E</item>
+        <item name="elevationOverlayEnabled">true</item>
+        <item name="elevationOverlayColor">#33FFFFFF</item>
+    </style>
+</resources>
