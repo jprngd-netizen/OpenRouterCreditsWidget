@@ -378,7 +378,7 @@ Your next move: approve, or run a high-accuracy review first. Full execution det
   - Evidence: .omo/evidence/task-6-revisao-codigo.txt (grep + build log)
   Commit: Y | `refactor(ui): extrair WidgetRenderer para construção de RemoteViews`
 
-- [ ] 7. Otimizações: cache de background bitmap, constantes nomeadas, dimensões reais
+- [x] 7. Otimizações: cache de background bitmap, constantes nomeadas, dimensões reais
   What to do / Must NOT do:
   - **Cache de background (usar LruCache obrigatoriamente — não usar Map simples):**
     - Em WidgetRenderer ou WidgetStateManager, implementar cache com `LruCache`:
@@ -456,7 +456,7 @@ Your next move: approve, or run a high-accuracy review first. Full execution det
   - Evidence: .omo/evidence/task-7-revisao-codigo.txt (grep + build log)
   Commit: Y | `perf: cachear background bitmap, extrair constantes, remover dead code SDK`
 
-- [ ] 8. Refatorar CreditsWidgetProvider: integrar novas classes + Job control + cache offline + Triple→LastModelInfo
+- [x] 8. Refatorar CreditsWidgetProvider: integrar novas classes + Job control + cache offline + Triple→LastModelInfo
   What to do / Must NOT do:
   - **Criar data class LastModelInfo** em ActivityStore.kt (ou novo arquivo Models.kt):
     ```kotlin
