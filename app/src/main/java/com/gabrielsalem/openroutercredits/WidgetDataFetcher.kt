@@ -16,14 +16,21 @@ data class WidgetData(
 
 object WidgetDataFetcher {
     suspend fun fetch(context: Context, key: String): WidgetData {
-        val credits = ApiClient.api.getCredits("Bearer $key")
+        // GET /api/v1/key funciona com API key normal (sem Management Key)
+        val keyInfo = ApiClient.api.getKey("Bearer $key")
+
+        // remaining = limit_remaining se houver limite configurado,
+        // senão usa (limit - usage) ou fallback para 0
+        val remaining = keyInfo.data.limit_remaining
+            ?: keyInfo.data.limit?.let { it - keyInfo.data.usage }
+            ?: 0.0
+
+        val currentTotal = keyInfo.data.usage
+
+        // Atividade é opcional — falha silenciosa para não travar o widget
         val activity = runCatching { ApiClient.api.getActivity("Bearer $key") }
             .getOrNull()?.data ?: emptyList()
 
-        val remaining = credits.data.remaining_credits
-            ?: (credits.data.total_credits - credits.data.total_usage)
-
-        val currentTotal = credits.data.total_usage
         UsageStore.seedFromActivity(context, activity, currentTotal)
         UsageStore.record(context, currentTotal)
         val series = UsageStore.series(context)
