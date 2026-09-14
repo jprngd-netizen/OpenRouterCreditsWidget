@@ -7,6 +7,9 @@ on:
   pull_request:
     branches: [main]
 
+permissions:
+  contents: write   # necessário para criar GitHub Releases
+
 jobs:
   build:
     runs-on: ubuntu-latest
