@@ -3,6 +3,19 @@ package com.gabrielsalem.openroutercredits
 import retrofit2.http.GET
 import retrofit2.http.Header
 
+// --- /api/v1/key (funciona com API key normal, sem Management Key) ---
+data class KeyResponse(
+    val data: KeyData
+)
+
+data class KeyData(
+    val usage: Double = 0.0,
+    val usage_daily: Double = 0.0,
+    val limit: Double? = null,          // null = sem limite configurado
+    val limit_remaining: Double? = null // null = sem limite configurado
+)
+
+// --- /api/v1/credits (requer Management Key — mantido para compatibilidade futura) ---
 data class CreditResponse(
     val data: CreditData
 )
@@ -32,9 +45,11 @@ data class ActivityItem(
 )
 
 interface OpenRouterApi {
-    @GET("credits")
-    suspend fun getCredits(@Header("Authorization") auth: String): CreditResponse
+    // Endpoint principal: funciona com qualquer API key
+    @GET("key")
+    suspend fun getKey(@Header("Authorization") auth: String): KeyResponse
 
+    // Endpoint de atividade (pode falhar silenciosamente — usado apenas para dados extras)
     @GET("activity")
     suspend fun getActivity(@Header("Authorization") auth: String): ActivityResponse
 }
